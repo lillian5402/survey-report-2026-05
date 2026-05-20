@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>訪日旅行者の購買行動と店舗体験調査レポート</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --jh:       #e38f97;
+    --jh-dark:  #c76d77;
+    --jh-light: #f5d4d7;
+    --jh-pale:  #fdf0f1;
+    --dark:  #2d2d2d;
+    --mid:   #666;
+    --light: #999;
+    --border:#f0e5e6;
+    --white: #fff;
+    --bg:    #fafafa;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Lato','Noto Sans JP','Noto Sans TC',sans-serif;
+    background:var(--bg); color:var(--dark);
+    font-size:15px; line-height:1.7;
+  }
+
+  /* ══════════════════════════
+     COVER
+  ══════════════════════════ */
+  .cover {
+    background: linear-gradient(160deg, #f9d8dc 0%, #fce8ea 30%, #fdf4f5 60%, #fce8ea 80%, #f7cfd4 100%);
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-start;
+    padding:56px 40px 64px;
+    text-align:center;
+  }
+  .cover-logo { width:180px; margin-bottom:40px; }
+  .cover-badge {
+    display:inline-block;
+    border:1.5px solid rgba(227,143,151,.6);
+    color:var(--jh-dark); font-size:11px; font-weight:700;
+    letter-spacing:4px; text-transform:uppercase;
+    padding:5px 20px; border-radius:40px; margin-bottom:28px;
+  }
+  .cover-title-jp {
+    font-size:34px; font-weight:900; color:var(--dark);
+    line-height:1.25; letter-spacing:-.3px; margin-bottom:10px;
+  }
+  .cover-title-zh {
+    font-size:15px; font-weight:400; color:var(--mid);
+    letter-spacing:1.5px; margin-bottom:6px;
+  }
+  .cover-period {
+    font-size:13px; color:var(--light); letter-spacing:1px; margin-bottom:4px;
+  }
+  .cover-divider {
+    width:60px; height:2px; background:var(--jh-light);
+    border-radius:2px; margin:32px auto;
+  }
+
+  /* 3 big stats */
+  .cover-stats { display:flex; gap:52px; justify-content:center; flex-wrap:wrap; margin-bottom:4px; }
+  .cs-num {
+    display:block; font-size:52px; font-weight:900;
+    color:var(--jh); line-height:1;
+  }
+  .cs-jp { font-size:13px; font-weight:700; color:var(--dark); margin-top:6px; }
+  .cs-zh { font-size:11px; color:var(--light); margin-top:2px; }
+
+  .cover-divider2 {
+    width:100%; max-width:700px; height:1px;
+    background:rgba(227,143,151,.25); margin:32px auto;
+  }
+
+  /* 4 overview cards */
+  .cover-cards {
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:14px; width:100%; max-width:820px;
+  }
+  @media(max-width:700px){ .cover-cards{ grid-template-columns:1fr 1fr; } }
+  .cc {
+    background:rgba(255,255,255,.7);
+    border:1.5px solid rgba(227,143,151,.25);
+    border-radius:18px; padding:22px 14px; text-align:center;
+    backdrop-filter:blur(4px);
+  }
+  .cc-num { font-size:38px; font-weight:900; color:var(--jh); display:block; line-height:1; }
+  .cc-jp  { font-size:12px; font-weight:700; color:var(--dark); margin-top:8px; line-height:1.4; }
+  .cc-zh  { font-size:10.5px; color:var(--light); margin-top:4px; line-height:1.4; }
+
+  /* ══════════════════════════
+     LAYOUT
+  ══════════════════════════ */
+  .container { max-width:900px; margin:0 auto; padding:64px 32px; }
+  .section    { margin-bottom:72px; }
+
+  /* Section header */
+  .sec-head { display:flex; align-items:flex-start; gap:14px; margin-bottom:32px; }
+  .sec-num  {
+    width:36px; height:36px; border-radius:50%;
+    background:var(--jh); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:900; flex-shrink:0; margin-top:3px;
+  }
+  .sec-jp   { font-size:18px; font-weight:700; line-height:1.3; }
+  .sec-zh   { font-size:12px; color:var(--light); margin-top:3px; }
+  .sec-q-jp { font-size:13px; color:var(--mid); margin-top:6px; }
+  .sec-q-zh { font-size:11px; color:var(--light); margin-top:2px; }
+
+  /* ── BAR CHART ── */
+  .bar-list { list-style:none; }
+  .bar-item { margin-bottom:20px; }
+  .bar-top  { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:7px; gap:12px; }
+  .bar-lbl-jp { font-size:14px; font-weight:600; color:var(--dark); }
+  .bar-lbl-zh { font-size:11px; color:var(--light); margin-top:1px; }
+  .bar-right   { text-align:right; flex-shrink:0; }
+  .bar-pct     { font-size:17px; font-weight:900; color:var(--jh-dark); display:block; }
+  .bar-cnt     { font-size:11px; color:var(--light); }
+  .bar-track   { background:var(--jh-light); border-radius:4px; height:10px; overflow:hidden; }
+  .bar-fill    { height:100%; background:linear-gradient(90deg,var(--jh),var(--jh-dark)); border-radius:4px; }
+
+  /* ── CARD GRID ── */
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+  .card {
+    background:var(--white); border:1.5px solid var(--border); border-radius:16px;
+    padding:22px 12px; text-align:center; transition:box-shadow .2s;
+  }
+  .card:hover { box-shadow:0 4px 20px rgba(227,143,151,.2); }
+  .card .big  { font-size:40px; font-weight:900; color:var(--jh); line-height:1; display:block; }
+  .card .cjp  { font-size:12px; font-weight:700; color:var(--dark); margin-top:8px; line-height:1.4; }
+  .card .czh  { font-size:11px; color:var(--light); margin-top:3px; line-height:1.4; }
+  .card .badge{
+    display:inline-block; background:var(--jh-pale); color:var(--jh-dark);
+    font-size:10px; font-weight:700; padding:2px 10px; border-radius:20px; margin-top:8px;
+  }
+
+  /* ── HIGHLIGHT ── */
+  .highlight {
+    background:var(--jh-pale); border-left:4px solid var(--jh);
+    border-radius:0 12px 12px 0; padding:20px 24px; margin-top:24px;
+  }
+  .hl-tag { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--jh); font-weight:700; margin-bottom:6px; }
+  .hl-num { font-size:34px; font-weight:900; color:var(--dark); line-height:1; }
+  .hl-jp  { font-size:13px; color:var(--mid); margin-top:8px; line-height:1.6; }
+  .hl-zh  { font-size:11px; color:var(--light); margin-top:3px; line-height:1.5; }
+
+  /* ── RANKED LIST ── */
+  .ranked { list-style:none; }
+  .ranked-row {
+    display:flex; align-items:center; gap:14px;
+    padding:13px 0; border-bottom:1px solid var(--border);
+  }
+  .ranked-row:last-child { border-bottom:none; }
+  .rank {
+    width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:900; flex-shrink:0;
+  }
+  .r1 { background:var(--jh); color:#fff; }
+  .r2 { background:#eca8b0; color:#fff; }
+  .r3 { background:#f5cfd3; color:var(--jh-dark); }
+  .rn { background:var(--border); color:var(--light); }
+  .ranked-txt   { flex:1; }
+  .ranked-jp    { font-size:14px; font-weight:600; }
+  .ranked-zh    { font-size:11px; color:var(--light); margin-top:1px; }
+  .ranked-pct   { font-size:17px; font-weight:900; color:var(--jh-dark); white-space:nowrap; }
+
+  /* ── INSIGHT ── */
+  .insight {
+    background:var(--white); border:1.5px solid var(--border);
+    border-radius:14px; padding:24px 28px; margin-top:28px; position:relative;
+  }
+  .insight::before {
+    content:'INSIGHT';
+    position:absolute; top:-11px; left:20px;
+    background:var(--jh); color:#fff;
+    font-size:9px; font-weight:900; letter-spacing:3px;
+    padding:3px 14px; border-radius:20px;
+  }
+  .ins-jp { font-size:14px; color:var(--dark); line-height:1.8; }
+  .ins-jp strong { color:var(--jh-dark); }
+  .ins-zh { font-size:12px; color:var(--mid); margin-top:10px; line-height:1.75; border-top:1px solid var(--border); padding-top:10px; }
+  .ins-zh strong { color:var(--jh-dark); }
+
+  /* ── TAG CLOUD ── */
+  .tagcloud  { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .tag       { background:var(--jh-pale); color:var(--jh-dark); border-radius:20px; font-weight:700; white-space:nowrap; }
+  .tag.xl    { font-size:19px; padding:10px 22px; }
+  .tag.lg    { font-size:15px; padding:8px 18px; }
+  .tag.md    { font-size:12px; padding:5px 14px; }
+  .tag.sm    { font-size:11px; padding:4px 12px; }
+
+  /* ── QUOTE GRID ── */
+  .quote-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px; }
+  @media(max-width:580px){ .quote-grid{ grid-template-columns:1fr; } }
+  .quote {
+    background:var(--white); border:1.5px solid var(--border);
+    border-radius:12px; padding:20px 18px; position:relative;
+  }
+  .quote::before {
+    content:'"'; font-size:52px; font-weight:900; color:var(--jh-light);
+    position:absolute; top:-6px; left:10px; line-height:1;
+  }
+  .quote p { padding-top:20px; font-size:13px; color:var(--mid); line-height:1.75; }
+
+  /* ── ACTION GRID ── */
+  .action-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+  @media(max-width:700px){ .action-grid{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:460px){ .action-grid{ grid-template-columns:1fr; } }
+  .action-card {
+    background:var(--white); border:1.5px solid var(--border); border-radius:16px;
+    padding:24px 20px;
+  }
+  .ac-num { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--jh); font-weight:700; margin-bottom:10px; }
+  .ac-jp  { font-size:15px; font-weight:700; color:var(--dark); line-height:1.4; margin-bottom:6px; }
+  .ac-zh  { font-size:12px; color:var(--mid); line-height:1.65; margin-bottom:14px; }
+  .ac-data{
+    display:inline-block; background:var(--jh-pale); color:var(--jh-dark);
+    font-size:10px; font-weight:700; padding:3px 12px; border-radius:20px;
+  }
+
+  hr { border:none; border-top:1.5px solid var(--border); margin:64px 0; }
+
+  footer {
+    background:var(--jh-pale); color:var(--light);
+    text-align:center; padding:36px 20px;
+    font-size:12px; letter-spacing:1.5px;
+  }
+  footer strong { color:var(--jh-dark); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     COVER
+══════════════════════════════════ -->
+<div class="cover">
+
+  <img class="cover-logo" src="data:image/png;base64,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" alt="Japaholic 好日刻">
+
+  <div class="cover-badge">Survey Report · 2026</div>
+
+  <h1 class="cover-title-jp">訪日旅行者の購買行動と店舗体験調査レポート</h1>
+  <p class="cover-title-zh">訪日旅客購物行為與店鋪體驗調查報告</p>
+  <p class="cover-period">調査期間：2026年5月 ／ 調查期間：2026年5月</p>
+
+  <div class="cover-divider"></div>
+
+  <!-- 3 stats -->
+  <div class="cover-stats">
+    <div>
+      <span class="cs-num">821</span>
+      <div class="cs-jp">有効回答数</div>
+      <div class="cs-zh">有效回覆數</div>
+    </div>
+    <div>
+      <span class="cs-num">10</span>
+      <div class="cs-jp">調査項目数</div>
+      <div class="cs-zh">調查題目數</div>
+    </div>
+    <div>
+      <span class="cs-num">77%</span>
+      <div class="cs-jp">現場購入経験者</div>
+      <div class="cs-zh">陌生品牌現場體驗後購買的比例</div>
+    </div>
+  </div>
+
+  <div class="cover-divider2"></div>
+
+  <!-- 4 overview cards -->
+  <div class="cover-cards">
+    <div class="cc">
+      <span class="cc-num">80%</span>
+      <div class="cc-jp">価格と優惠が購買の最大の決め手</div>
+      <div class="cc-zh">價格與優惠為最主要的購買決定因素</div>
+    </div>
+    <div class="cc">
+      <span class="cc-num">98%</span>
+      <div class="cc-jp">「日本製」が購買好感度を高める</div>
+      <div class="cc-zh">「日本製」標示會提升購買好感度</div>
+    </div>
+    <div class="cc">
+      <span class="cc-num">84%</span>
+      <div class="cc-jp">体験専用ゾーンへの参加意欲あり</div>
+      <div class="cc-zh">表示願意參與店內專屬體驗專區</div>
+    </div>
+    <div class="cc">
+      <span class="cc-num">96%</span>
+      <div class="cc-jp">満足な体験が購買決定に影響する</div>
+      <div class="cc-zh">滿意的店內體驗會影響最終購買決策</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════
+     BODY
+══════════════════════════════════ -->
+<div class="container">
+
+  <!-- ── Q1 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q1</div>
+      <div>
+        <div class="sec-jp">購買の「決め手」となった契機は何ですか？</div>
+        <div class="sec-zh">最常成為您決定購買的「關鍵契機」是什麼？</div>
+        <div class="sec-q-jp">最も購入を決意させた「きっかけ」はどれですか？（複数回答可）</div>
+        <div class="sec-q-zh">在日本購買商品時，最常成為您決定購買的「關鍵契機」是什麼？（可複選）</div>
+      </div>
+    </div>
+
+    <ul class="bar-list">
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">価格と優惠（クーポン利用・免税・割引など）</div><div class="bar-lbl-zh">價格與優惠（如：使用優惠券、免稅、折扣）</div></div>
+          <div class="bar-right"><span class="bar-pct">80%</span><span class="bar-cnt">656人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">口コミと評価（ネット記事・SNSシェア・知人の推薦）</div><div class="bar-lbl-zh">口碑與評價（如：網路文章、SNS分享、親友推薦）</div></div>
+          <div class="bar-right"><span class="bar-pct">68%</span><span class="bar-cnt">561人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:68%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">現場での実際の体験（試着・試食・試用・現場デモンストレーションなど）</div><div class="bar-lbl-zh">現場實際體驗（如：試穿、試吃、試擦、現場演示等）</div></div>
+          <div class="bar-right"><span class="bar-pct">47%</span><span class="bar-cnt">382人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:47%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">商品の外パッケージが魅力的、または「日本限定」の表示がある</div><div class="bar-lbl-zh">商品外包裝吸引人，或有日本限定標示</div></div>
+          <div class="bar-right"><span class="bar-pct">42%</span><span class="bar-cnt">344人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:42%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">店員またはブランド担当者による専門的な説明</div><div class="bar-lbl-zh">店員或品牌人員的專業說明</div></div>
+          <div class="bar-right"><span class="bar-pct">18%</span><span class="bar-cnt">149人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:18%"></div></div>
+      </li>
+    </ul>
+
+    <div class="insight">
+      <div class="ins-jp">「価格」と「口コミ」は旅行前に行われる事前リサーチを反映しており、購買行動の下地を形成している。注目すべき点は、「現場体験」が47%で3位に入っていることであり、現場での体験がオンライン情報では補えない最終的な購買確認ボタンとして機能していることを示している。スタッフ説明の割合は18%にとどまるが、自由記述では「中国語対応」が最も多く出現するキーワードであり、<strong>言語の壁を超えた接客こそがスタッフ説明の実質的な影響力を左右する最大要因</strong>であることが示唆される。</div>
+      <div class="ins-zh">「價格」與「口碑」反映旅客出發前已進行事前研究的行為模式，構成購買行為的基礎。值得注意的是，「現場體驗」以47%位居第三，顯示現場親身感受是線上資訊無法取代的最終購買確認因素。店員說明雖僅佔18%，但自由回答中「中文溝通」是出現最多次的關鍵詞，<strong>說明突破語言障礙的接客服務，才是決定店員說明成效的最大關鍵</strong>。</div>
+    </div>
+  </div>
+
+  <!-- ── Q2 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q2</div>
+      <div>
+        <div class="sec-jp">「日本製」は購買好感度を高めますか？</div>
+        <div class="sec-zh">請問「日本製」是否會增加您的購買好感度？</div>
+        <div class="sec-q-jp">「日本製」という表示は、あなたの購買意欲や好感度を高めますか？</div>
+        <div class="sec-q-zh">商品標有「日本製」時，是否會提升您的購買意願或好感度？</div>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card"><span class="big">74%</span><div class="cjp">非常に加点になる</div><div class="czh">非常加分，明顯提升購買意願</div><div class="badge">605人</div></div>
+      <div class="card"><span class="big">24%</span><div class="cjp">やや加点になる</div><div class="czh">略有加分，稍微提升購買好感</div><div class="badge">199人</div></div>
+      <div class="card"><span class="big">2%</span><div class="cjp">特に感じない</div><div class="czh">無感，不影響購買決定</div><div class="badge">15人</div></div>
+      <div class="card"><span class="big">&lt;1%</span><div class="cjp">購入しない・気にしない</div><div class="czh">不會購買或不在意此標示</div><div class="badge">2人</div></div>
+    </div>
+    <div class="insight">
+      <div class="ins-jp"><strong>98%の回答者が「日本製」という表示で購買意欲が高まる</strong>と回答した。「非常に加点」が74%を占めることからも、「Made in Japan」の明記は購買迷いを解消する最も費用対効果の高い手段であり、陳列・POP・パッケージへの積極的な表示が必須の施策となる。</div>
+      <div class="ins-zh"><strong>98%的受訪者表示「日本製」標示會提升購買意願</strong>，其中「非常加分」佔74%。由此可見，清楚標示「Made in Japan」是降低購買猶豫門檻最具成本效益的手段，在陳列、促銷牌、包裝上積極標示是不可忽略的必要策略。</div>
+    </div>
+  </div>
+
+  <!-- ── Q3 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q3</div>
+      <div>
+        <div class="sec-jp">日本旅行中に必ず立ち寄るショップはどこですか？</div>
+        <div class="sec-zh">您去日本旅遊時，一定會去逛的商店有哪些？</div>
+        <div class="sec-q-jp">日本へ旅行する際に、毎回必ず訪れると言えるショップはどれですか？（複数回答可）</div>
+        <div class="sec-q-zh">每次前往日本旅遊時，有哪些商店是您一定會去逛的？（可複選）</div>
+      </div>
+    </div>
+    <ul class="ranked">
+      <li class="ranked-row">
+        <div class="rank r1">1</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">ドラッグストア（マツモトキヨシ・Sugi薬局など）</div>
+          <div class="ranked-zh">藥妝店（如：松本清、Sugi 藥局等）</div>
+        </div>
+        <div class="ranked-pct">83%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank r2">2</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">生活雑貨・総合ディスカウントショップ（ドン・キホーテ・Loft・ハンズなど）</div>
+          <div class="ranked-zh">生活雜貨／綜合折扣店（如：唐吉訶德、Loft、Hands等）</div>
+        </div>
+        <div class="ranked-pct">81%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank r3">3</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">スーパーマーケット</div>
+          <div class="ranked-zh">超市</div>
+        </div>
+        <div class="ranked-pct">75%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank rn">4</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">コンビニエンスストア</div>
+          <div class="ranked-zh">超商</div>
+        </div>
+        <div class="ranked-pct">70%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank rn">5</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">大型家電量販店（ビックカメラ・ヨドバシカメラなど）</div>
+          <div class="ranked-zh">大型家電量販店（如：BicCamera、Yodobashi等）</div>
+        </div>
+        <div class="ranked-pct">45%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank rn">6</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">百貨店（三越伊勢丹・高島屋など）</div>
+          <div class="ranked-zh">百貨公司（如：三越伊勢丹、高島屋等）</div>
+        </div>
+        <div class="ranked-pct">40%</div>
+      </li>
+    </ul>
+    <div class="insight">
+      <div class="ins-jp">ドラッグストアが83%で圧倒的な首位を占める。スーパー（75%）とコンビニ（70%）が高い支持を集めている点は、旅行者にとって<strong>「日本の日常生活感を体験すること」自体が旅の目的</strong>となっていることを示している。一方、百貨店は40%にとどまっており、高単価ブランドは来店動機を高めるための積極的な集客設計が不可欠である。</div>
+      <div class="ins-zh">藥妝店以83%穩坐第一。超市（75%）與超商（70%）獲得高度支持，代表對旅客而言，<strong>「體驗日本日常生活感」本身就是旅行目的之一</strong>，而不只是購物。另一方面，百貨公司僅佔40%，顯示高單價品牌需要設計更積極的引流策略來提升來店動機。</div>
+    </div>
+  </div>
+
+  <!-- ── Q4 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q4</div>
+      <div>
+        <div class="sec-jp">その店舗に足を踏み入れた主な理由は何ですか？</div>
+        <div class="sec-zh">吸引您走進該賣場的主要原因是什麼？</div>
+        <div class="sec-q-jp">上記の店舗に実際に入った際、最も大きな来店理由はどれですか？（複数回答可）</div>
+        <div class="sec-q-zh">承上題，是什麼原因吸引您走進那個賣場？（可複選）</div>
+      </div>
+    </div>
+    <ul class="bar-list">
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">取り扱い商品の種類が豊富である</div><div class="bar-lbl-zh">商品種類齊全，選擇豐富</div></div>
+          <div class="bar-right"><span class="bar-pct">86%</span><span class="bar-cnt">709人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:86%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">価格が安い、またはクーポンや優惠が使える</div><div class="bar-lbl-zh">價格便宜，或有優惠券可以使用</div></div>
+          <div class="bar-right"><span class="bar-pct">73%</span><span class="bar-cnt">596人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:73%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">立地が便利である（観光地・駅周辺など）</div><div class="bar-lbl-zh">地點便利（如：觀光景點附近、車站周邊等）</div></div>
+          <div class="bar-right"><span class="bar-pct">61%</span><span class="bar-cnt">499人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:61%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">現場で商品を試用・体験できる</div><div class="bar-lbl-zh">可以在現場試用或體驗商品</div></div>
+          <div class="bar-right"><span class="bar-pct">27%</span><span class="bar-cnt">224人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:27%"></div></div>
+      </li>
+    </ul>
+    <div class="insight">
+      <div class="ins-jp">来店の主な動機は「品揃えの豊富さ × 価格の魅力 × 立地の利便性」という三要素に集中しており、これは大型チェーン店がもつ構造的な優位性を示している。一方、「現場での試用・体験」を目的として来店した割合はわずか27%にとどまる。<strong>つまり多くの旅行者は体験を目的とせずに入店しており、体験ゾーンは来店後に「発見する驚き」として設計・露出する必要がある</strong>。</div>
+      <div class="ins-zh">來店的主要動機集中在「商品齊全×價格實惠×地點便利」三大要素，反映大型連鎖通路的結構性優勢。另一方面，以「現場試用體驗」為目的進店的旅客僅佔27%。<strong>這意味著大多數旅客並非帶著體驗目的進店，因此體驗專區需要透過店內主動曝光與陳列設計，讓旅客在進店後自然發現並參與</strong>。</div>
+    </div>
+  </div>
+
+  <!-- ── Q5 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q5</div>
+      <div>
+        <div class="sec-jp">元々知らないブランドを、店内の体験後に購入した経験はありますか？</div>
+        <div class="sec-zh">您是否曾有過「原本不認識這個品牌，但因為在店內看到或試用後就決定購買」的經驗？</div>
+        <div class="sec-q-jp">旅行中、全く知らなかったブランドの商品を、店内での体験（試用・デモ・展示など）をきっかけに購入したことがありますか？</div>
+        <div class="sec-q-zh">在日本旅遊時，您是否曾因為在店內看到展示、試用商品或接受說明後，購買了一個原本完全不認識的品牌的商品？</div>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card"><span class="big">53%</span><div class="cjp">数回経験したことがある</div><div class="czh">有過幾次這樣的經驗</div><div class="badge">435人</div></div>
+      <div class="card"><span class="big">24%</span><div class="cjp">よく経験する</div><div class="czh">經常有，這種情況很常見</div><div class="badge">198人</div></div>
+      <div class="card"><span class="big">20%</span><div class="cjp">ほとんど経験したことがない</div><div class="czh">很少有，幾乎不會這樣</div><div class="badge">161人</div></div>
+      <div class="card"><span class="big">3%</span><div class="cjp">一度もない。知っているブランドしか買わない</div><div class="czh">從來沒有，只購買自己認識的品牌</div><div class="badge">27人</div></div>
+    </div>
+    <div class="highlight">
+      <div class="hl-tag">Key Number</div>
+      <div class="hl-num">77%</div>
+      <div class="hl-jp">「数回ある」と「よくある」の合計。4人に3人が未知ブランドを店内体験後に購入した経験を持つ。</div>
+      <div class="hl-zh">「有過幾次」與「經常有」的合計比例。四位旅客中就有三位，曾因店內體驗後購買了原本完全不認識的品牌。</div>
+    </div>
+    <div class="insight">
+      <div class="ins-jp">回答者の4人に3人が「未知のブランドを店内体験をきっかけに購入した」経験を持つことが明らかになった。旅行中は「せっかくだから試してみよう」という心理が働き、<strong>購買ハードルが自然に下がる傾向があり、これは新興ブランドにとって既存顧客基盤なしに顧客を獲得できる最もコストパフォーマンスの高い機会</strong>となっている。</div>
+      <div class="ins-zh">每四位受訪者中就有三位，曾有過「因店內體驗而購買陌生品牌」的經驗。旅遊期間「既然都來了就試試看」的心態，使得購買門檻自然降低，<strong>這對新興品牌而言，是在沒有既有顧客基礎的情況下，以最低成本獲得新客的絕佳黃金機會</strong>。</div>
+    </div>
+  </div>
+
+  <!-- ── Q6 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q6</div>
+      <div>
+        <div class="sec-jp">馴染みのないブランドや高単価商品を選ぶ際に、最も困ることは何ですか？</div>
+        <div class="sec-zh">在日本店鋪挑選「不熟悉」的品牌或高單價商品時，最令您困擾的是什麼？</div>
+        <div class="sec-q-jp">知らないブランドや値段が高い商品を選ぶとき、最も困る・迷うポイントはどれですか？</div>
+        <div class="sec-q-zh">當您在日本店鋪挑選不熟悉的品牌或價格較高的商品時，最讓您感到困惑或猶豫的是什麼？</div>
+      </div>
+    </div>
+    <ul class="bar-list">
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">商品が本当に自分に合っているかどうか分からない</div><div class="bar-lbl-zh">不確定這個商品是否真的適合自己</div></div>
+          <div class="bar-right"><span class="bar-pct">49%</span><span class="bar-cnt">400人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:49%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">パッケージがすべて日本語で、内容を具体的に理解できない</div><div class="bar-lbl-zh">包裝全是日文，看不懂具體的商品說明</div></div>
+          <div class="bar-right"><span class="bar-pct">34%</span><span class="bar-cnt">280人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:34%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">ネットの評価が多すぎて、現場で真偽を判断できない</div><div class="bar-lbl-zh">網路評價太多，在現場無法判斷評價的真偽</div></div>
+          <div class="bar-right"><span class="bar-pct">9%</span><span class="bar-cnt">73人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:9%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">店内が混雑していて、ゆっくり試用できるスペースがない</div><div class="bar-lbl-zh">店內人潮擁擠，沒有足夠的空間好好試用</div></div>
+          <div class="bar-right"><span class="bar-pct">6%</span><span class="bar-cnt">53人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:6%"></div></div>
+      </li>
+    </ul>
+    <div class="insight">
+      <div class="ins-jp">上位2項目を合計すると全体の83%を占める。<strong>「自分への適合性への不安（49%）」は試用体験で解消でき、「日本語のみの表記（34%）」は中国語表示やQRコードで解決できる</strong>。この2つの課題はどちらも体験設計と言語対応という具体的な施策で解消可能であり、困りごとがそのまま投資すべき改善領域を指し示している。</div>
+      <div class="ins-zh">前兩項困擾合計佔全體的83%。<strong>「不確定是否適合自己（49%）」可透過試用體驗設計來解消，「日文包裝看不懂（34%）」則可透過中文標示或QR說明頁來解決</strong>。這兩個痛點都有清晰明確的對應解法，困擾的所在正是品牌需要優先投資的改善方向。</div>
+    </div>
+  </div>
+
+  <!-- ── Q7 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q7</div>
+      <div>
+        <div class="sec-jp">店舗内に「専用体験ゾーン」が設置されていたら、利用したいですか？</div>
+        <div class="sec-zh">如果店鋪內設有「專屬體驗專區」，您會想體驗嗎？</div>
+        <div class="sec-q-jp">もし店舗の中に商品を自由に体験できる「専用体験ゾーン」があったとしたら、あなたは利用しますか？</div>
+        <div class="sec-q-zh">假設店內設有可以自由體驗商品的「專屬體驗專區」，您會想去體驗看看嗎？</div>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card"><span class="big">43%</span><div class="cjp">ぜひ利用したい</div><div class="czh">會，很想去體驗看看</div><div class="badge">353人</div></div>
+      <div class="card"><span class="big">41%</span><div class="cjp">たぶん利用すると思う</div><div class="czh">可能會，應該會去體驗</div><div class="badge">339人</div></div>
+      <div class="card"><span class="big">14%</span><div class="cjp">内容によっては利用するかもしれない</div><div class="czh">不一定，視體驗內容而定</div><div class="badge">116人</div></div>
+      <div class="card"><span class="big">2%</span><div class="cjp">利用しないと思う</div><div class="czh">不會，應該不會去體驗</div><div class="badge">13人</div></div>
+    </div>
+    <div class="highlight">
+      <div class="hl-tag">Key Number</div>
+      <div class="hl-num">84%</div>
+      <div class="hl-jp">「ぜひ利用したい」と「たぶん利用する」の合計。体験専用ゾーンへの高い潜在参加意欲が確認された。</div>
+      <div class="hl-zh">「會」與「可能會」的合計比例。調查結果確認旅客對店內專屬體驗專區具有高度的潛在參與意願。</div>
+    </div>
+    <div class="insight">
+      <div class="ins-jp">「利用しない」と明確に回答したのはわずか2%であり、<strong>84%が体験専用ゾーンへの参加意欲を持っている</strong>ことが示された。「たぶん利用する」層を「確実に利用する」層へ転換するには、体験内容の視覚的な明示と、店員に声をかけなくても利用できる自助式の設計が効果的であると考えられる。</div>
+      <div class="ins-zh">明確表示「不會」體驗的旅客僅佔2%，<strong>84%的旅客對體驗專區具有參與意願</strong>。若要將「可能會」的族群轉化為「確定參與」，關鍵在於清楚標示體驗內容，並設計成不需要主動與店員互動就能自助使用的體驗形式。</div>
+    </div>
+  </div>
+
+  <!-- ── Q8 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q8</div>
+      <div>
+        <div class="sec-jp">どのような「体験方法」が迷いを解消し、ブランドへの好感度を高めますか？</div>
+        <div class="sec-zh">在店鋪中，哪種「體驗方式」最能解決您的猶豫、並讓您對品牌產生好感？</div>
+        <div class="sec-q-jp">店舗内での体験において、購入の迷いを最も効果的に解消し、かつブランドへの好感度を高める方法はどれですか？（複数回答可）</div>
+        <div class="sec-q-zh">在店鋪中體驗商品時，哪種方式最能有效消除您的猶豫感，同時讓您對該品牌產生好感？（可複選）</div>
+      </div>
+    </div>
+    <ul class="bar-list">
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">デモ機または試用品が用意されており、直接操作・使用できる（試飲・試用・家電操作など）</div><div class="bar-lbl-zh">現場備有 demo 機或試用品，可以直接操作體驗（如試飲、試擦、家電操作等）</div></div>
+          <div class="bar-right"><span class="bar-pct">72%</span><span class="bar-cnt">594人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:72%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">持ち帰ることのできるサンプルを受け取れる</div><div class="bar-lbl-zh">可以獲得帶回家試用的樣品</div></div>
+          <div class="bar-right"><span class="bar-pct">60%</span><span class="bar-cnt">495人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:60%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">店員またはブランド専任スタッフが使い方と効果を現場で説明してくれる</div><div class="bar-lbl-zh">由店員或品牌專員在現場說明商品使用方法與功效</div></div>
+          <div class="bar-right"><span class="bar-pct">37%</span><span class="bar-cnt">305人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:37%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">使用前後の変化を示した対比写真（Before/After）や実際のユーザーのリアルな評価を展示する</div><div class="bar-lbl-zh">現場展示使用者的真實使用前後對比照（Before/After）或真實評價</div></div>
+          <div class="bar-right"><span class="bar-pct">31%</span><span class="bar-cnt">257人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:31%"></div></div>
+      </li>
+      <li class="bar-item">
+        <div class="bar-top">
+          <div><div class="bar-lbl-jp">実際の使用シーンを模した空間を設置する（試着室・美容鏡コーナーなど）</div><div class="bar-lbl-zh">設置模擬實際使用情境的空間（如試衣間、美容鏡台等）</div></div>
+          <div class="bar-right"><span class="bar-pct">24%</span><span class="bar-cnt">197人</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:24%"></div></div>
+      </li>
+    </ul>
+    <div class="insight">
+      <div class="ins-jp">自助式の体験（72%）が最も支持されており、旅行者は「説得される」よりも「自分自身で感じて判断する」ことを好む傾向が明確に示された。<strong>サンプルの持ち帰り（60%）はホテルに戻ってからも継続してブランドとの接点を生み出す、コストパフォーマンスの高い手法</strong>である。Before/After展示（31%）の支持率が相対的に低いのは、「演出されたもの」に対する信頼感の低さを示唆している可能性がある。</div>
+      <div class="ins-zh">自助式體驗（72%）獲得最多支持，清楚顯示旅客傾向「自己感受後再判斷」，而非「被說服接受」的消費模式。<strong>樣品帶回（60%）是一種成本效益高的做法，能讓品牌的接觸延續到旅客回到飯店甚至回國之後</strong>。Before/After展示（31%）支持率相對偏低，可能意味著旅客對「刻意呈現的內容」存在信任疑慮。</div>
+    </div>
+  </div>
+
+  <!-- ── Q9 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q9</div>
+      <div>
+        <div class="sec-jp">店内で満足できる「体験」を得た場合、その後の購買行動はどのように変わりますか？</div>
+        <div class="sec-zh">如果在店內獲得了滿意的「體驗」，您的購買行為會如何改變？</div>
+        <div class="sec-q-jp">店舗内の体験で十分な満足感を得た場合、その後の購買行動としてどれが最も当てはまりますか？</div>
+        <div class="sec-q-zh">當您在店內獲得了令自己滿意的體驗後，最符合您實際購買行為變化的選項是哪一個？</div>
+      </div>
+    </div>
+    <ul class="ranked">
+      <li class="ranked-row">
+        <div class="rank r1">1</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">事前の予定になくても、その場で購入する</div>
+          <div class="ranked-zh">即使不在事先的購買計畫內，也會當場直接購買</div>
+        </div>
+        <div class="ranked-pct">57%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank r2">2</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">現場では購入しなくても、帰国後に別の手段で継続して購入する</div>
+          <div class="ranked-zh">即使現場沒有購買，回國後也會透過其他管道持續購買</div>
+        </div>
+        <div class="ranked-pct">19%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank r3">3</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">より高いスペックや単価の高いシリーズの購入を検討するようになる</div>
+          <div class="ranked-zh">會開始考慮購買規格更高或單價更高的系列商品</div>
+        </div>
+        <div class="ranked-pct">13%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank rn">4</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">SNSプラットフォーム（IG・Threadsなど）でシェアし、知人・友人にすすめる</div>
+          <div class="ranked-zh">會在社群平台（如 IG、Threads 等）分享心得，並推薦給親友</div>
+        </div>
+        <div class="ranked-pct">7%</div>
+      </li>
+      <li class="ranked-row">
+        <div class="rank rn">5</div>
+        <div class="ranked-txt">
+          <div class="ranked-jp">購買行動には全く影響しない</div>
+          <div class="ranked-zh">對購買行動完全沒有影響</div>
+        </div>
+        <div class="ranked-pct">4%</div>
+      </li>
+    </ul>
+    <div class="highlight">
+      <div class="hl-tag">体験転換率 / 體驗轉換率</div>
+      <div class="hl-num">96%</div>
+      <div class="hl-jp">満足できる体験は購買決定に何らかの影響を与える。「全く影響しない」と回答したのはわずか4%にとどまる。</div>
+      <div class="hl-zh">令人滿意的體驗會對購買決策產生某種程度的影響，表示「完全沒有影響」的受訪者僅佔4%。</div>
+    </div>
+    <div class="insight">
+      <div class="ins-jp"><strong>57%の回答者が「予定外でもその場で購入する」</strong>と答えており、体験は最も直接的な購買転換エンジンであることが証明された。さらに、帰国後の継続購入（19%）と購入グレードのアップ（13%）を合算すると、1度の優れた体験が「即時購買 × 長期回購 × 客単価の向上」という三層構造でビジネス貢献をもたらすことが分かる。SNSシェア（7%）は比率こそ低いが、1投稿あたりの拡散規模を考慮すると無視できない波及効果を持つ。</div>
+      <div class="ins-zh"><strong>57%的受訪者表示「即使不在計畫內，也會當場購買」</strong>，充分證明體驗是最直接有效的購買轉化引擎。進一步加上回國後的持續回購（19%）與升級購買高規格系列（13%），可以看出一次優質的體驗能帶來「即時購買×長期回購×客單價提升」三層次的商業效益。SNS分享（7%）比例看似不高，但考量到每則貼文的觸及規模，其實際擴散效果不容低估。</div>
+    </div>
+  </div>
+
+  <!-- ── Q10 ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">Q10</div>
+      <div>
+        <div class="sec-jp">自由記述の頻出キーワード分析</div>
+        <div class="sec-zh">自由回答關鍵詞分析</div>
+        <div class="sec-q-jp">日本での買い物で「印象に残った」または「購入を決めた」体験をシェアしてください。（自由記述・334件の有効回答）</div>
+        <div class="sec-q-zh">請分享一次您在日本購物時「印象深刻」或「決定購買」的經驗。（自由填答，334份有效回答）</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:28px">
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--light);font-weight:700;margin-bottom:14px;">頻出キーワード ／ 高頻關鍵詞</div>
+      <div class="tagcloud">
+        <span class="tag xl">中文・中国語対応 98回</span>
+        <span class="tag xl">店員 70回</span>
+        <span class="tag lg">試用 56回</span>
+        <span class="tag lg">試食 23回</span>
+        <span class="tag md">ドラッグストア・薬局 15回</span>
+        <span class="tag md">価格・安い 16回</span>
+        <span class="tag sm">試飲 8回</span>
+        <span class="tag sm">試着 8回</span>
+        <span class="tag sm">限定商品 6回</span>
+        <span class="tag sm">ブランド 11回</span>
+      </div>
+    </div>
+
+    <div class="quote-grid">
+      <div class="quote"><p>北海道のスーパーでメロンの試食コーナーがあり、量も十分で中国語で会話もできた。その場で2個買ってホテルに持ち帰った。<br><span style="font-size:11px;color:var(--light);margin-top:6px;display:block">北海道的超市有哈密瓜試吃，份量充足，加上能用中文溝通，當場就買了兩顆帶回飯店。</span></p></div>
+      <div class="quote"><p>ドライヤーを購入しに行ったとき、中国語が話せる店員と出会い、とても親切に接してくれたので気持ちが嬉しくなり、その場ですぐに購入した。<br><span style="font-size:11px;color:var(--light);margin-top:6px;display:block">去買吹風機時遇到會講中文的店員，服務非常親切，心情一好就當場直接購買了。</span></p></div>
+      <div class="quote"><p>高単価のハンドメイド革製品を前に価格に迷っていたところ、傷があるためさらに値引きされると店員に言われ、運命的な出会いだと感じて即決した。<br><span style="font-size:11px;color:var(--light);margin-top:6px;display:block">在高單價手作皮革品前猶豫不決，店員說因有刮痕可再折扣，感覺像是命中注定，當場就決定購買了。</span></p></div>
+      <div class="quote"><p>@cosmeの店舗陳列が気に入っており、特に商品ランキングの見せ方が上手で、高評価商品を素早く把握でき、自然と購買意欲が高まる。<br><span style="font-size:11px;color:var(--light);margin-top:6px;display:block">很喜歡@cosme的陳列方式，尤其商品排行榜讓人能快速掌握高評價商品，購買慾望自然提升。</span></p></div>
+      <div class="quote"><p>日本酒の試飲をして非常に気に入り、その場で大瓶を1本購入し、さらにホテルで飲むための小瓶もいくつか一緒に買った。<br><span style="font-size:11px;color:var(--light);margin-top:6px;display:block">試喝日本酒後非常喜歡，當場買了一大瓶，另外還買了幾支小瓶帶回飯店喝。</span></p></div>
+      <div class="quote"><p>異なる香りのハンドクリームを複数比較しながら試用でき、自分に合ったものを選べた。試用できなければ失敗購入になっていたと思う。<br><span style="font-size:11px;color:var(--light);margin-top:6px;display:block">能夠比較試用多種香味的護手霜，最後選到適合自己的。如果不能試用，很可能就會買錯了。</span></p></div>
+    </div>
+
+    <div class="insight">
+      <div class="ins-jp">自由記述で最も多く出現したキーワードは<strong>「中文・中国語対応」（98回）</strong>であり、試用（56回）や店員（70回）を上回る頻度で登場した。これは言語サポートが購買コンバージョンを直接左右する最大公約数的な要因であることを示している。また、@cosmeのランキング陳列方式は「可視化されたソーシャルプルーフ（信頼）」として複数の回答に言及されており、参考にすべき陳列の成功モデルとなっている。</div>
+      <div class="ins-zh">自由回答中出現最多的關鍵詞是<strong>「中文・中文溝通」（98次）</strong>，出現頻率超過試用（56次）和店員（70次）。這充分說明語言支援是直接影響購買轉化率的最大公約數因素。此外，@cosme的排行榜陳列方式被多位受訪者提及，被視為一種「可視化的社會信任佐證」，是值得學習參考的陳列成功模式。</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ── ACTION ── -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num" style="background:var(--dark)">→</div>
+      <div>
+        <div class="sec-jp">アクション提言</div>
+        <div class="sec-zh">行動建議</div>
+      </div>
+    </div>
+    <div class="action-grid">
+
+      <div class="action-card">
+        <div class="ac-num">Action 01</div>
+        <div class="ac-jp">中国語対応スタッフの戦略的配置</div>
+        <div class="ac-zh">在藥妝店、家電量販店等高人流店鋪配置具備中文溝通能力的服務人員，直接破解「不確定是否適合自己（49%）」與「日文看不懂（34%）」兩大購買障礙。</div>
+        <div class="ac-data">根拠：Q1（店員18%）× Q10（中文98回）</div>
+      </div>
+
+      <div class="action-card">
+        <div class="ac-num">Action 02</div>
+        <div class="ac-jp">自助式体験ゾーンの整備と拡充</div>
+        <div class="ac-zh">設置不需店員協助即可自行操作的試用區（demo機、試飲站、試擦台），對應72%旅客「希望自己感受後再決定購買」的消費偏好。</div>
+        <div class="ac-data">根拠：Q7（84%意欲あり）× Q8（自助式72%）</div>
+      </div>
+
+      <div class="action-card">
+        <div class="ac-num">Action 03</div>
+        <div class="ac-jp">持ち帰りサンプルプログラムの導入</div>
+        <div class="ac-zh">提供可帶回飯店或帶回國試用的樣品，將品牌接觸時間從店內延伸至旅程結束後，強化並轉化60%旅客對帶回試用樣品的偏好為實際回購行動。</div>
+        <div class="ac-data">根拠：Q8（サンプル持ち帰り60%）× Q9（帰国後回購19%）</div>
+      </div>
+
+      <div class="action-card">
+        <div class="ac-num">Action 04</div>
+        <div class="ac-jp">中国語表記・QRコード説明の導入</div>
+        <div class="ac-zh">在商品旁設置中文說明牌，或附上連結至中文商品介紹頁的QR碼，直接解決34%旅客「包裝全是日文、看不懂商品說明」所造成的購買猶豫問題。</div>
+        <div class="ac-data">根拠：Q6（日本語のみの表記34%）</div>
+      </div>
+
+      <div class="action-card">
+        <div class="ac-num">Action 05</div>
+        <div class="ac-jp">「日本製」ラベルの前面・積極展示</div>
+        <div class="ac-zh">在陳列架、店頭促銷牌（POP）與商品包裝上清楚標示「Made in Japan」，積極運用98%旅客對「日本製」的高度好感，加速購買決策、降低猶豫時間。</div>
+        <div class="ac-data">根拠：Q2（日本製で98%が好感UP）</div>
+      </div>
+
+      <div class="action-card">
+        <div class="ac-num">Action 06</div>
+        <div class="ac-jp">百貨店向け高単価顧客獲得施策</div>
+        <div class="ac-zh">針對百貨公司入選比例相對偏低（40%）的現狀，設計具有吸引力的高端體驗專區或體驗活動，開發並轉化13%有意升級購買高單價系列的潛力消費族群。</div>
+        <div class="ac-data">根拠：Q3（百貨店40%）× Q9（高スペック購入13%）</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>訪日旅行者の購買行動と店舗体験調査レポート</strong><br>
+  訪日旅客購物行為與店鋪體驗調查報告<br>
+  調査期間：2026年5月 ／ 調查期間：2026年5月 ／ N = 821
+</footer>
+
+</body>
+</html>
